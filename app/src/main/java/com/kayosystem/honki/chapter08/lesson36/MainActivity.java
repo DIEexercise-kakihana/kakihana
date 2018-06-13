@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String groupId = "0";
 
     /**
-     * 現在年月日(yyyy-MM-dd)を取得する
+     * 現在年月日(yyyy-MM-dd;mm)を取得する
      *
-     * @return 現在年月日(yyyy-MM-dd)
+     * @return 現在年月日(yyyy-MM-dd:mm)
      */
     private String getDate() {
         CharSequence charSequence = android.text.format.DateFormat.format("yyyy-MM-dd-HH:mm", Calendar.getInstance());
