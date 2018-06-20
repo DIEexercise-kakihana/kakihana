@@ -2,7 +2,6 @@ package com.kayosystem.honki.chapter08.lesson36;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,8 +13,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.*;//SimpleDateFormat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -59,31 +60,75 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setup() {
 
-        DatabaseReference reference = database.getReference("attendance/0");
+        String stNum = (String) userNum;
+        DatabaseReference reference = database.getReference("attendance/" + stNum);
         Query query = reference.orderByKey();
-        query.addValueEventListener(new ValueEventListener() {
+
+
+        ValueEventListener valueEventListener = query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 mTxtHistory.setText(null);
 
                 StringBuilder sb = new StringBuilder();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
+
+                Study_data study_data[] = new Study_data[10];
+                for(int k = 0;k < 10;k++){
+                    study_data[k] = new Study_data();
+                }
+                int i = 0;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String key = snapshot.getKey();
 
-                    //Attendance attendance = snapshot.getValue(Attendance.class);
-                    String subject = (String) dataSnapshot.child("subject").getValue();
-                    //String time = (String) dataSnapshot.child("time").getValue();
-                    //String name = (String) dataSnapshot.child("name").getValue();
+                    //タイムスタンプ以外の要素は省く
+                    if (key.toString().equals("login")) {
+                        break;
+                    }
+                    if (key.toString().equals("charactorID")) {
+                        break;
+                    }
+                    if (key.toString().equals("groupID")) {
+                        break;
+                    }
 
-                    //sb.append(key).append(" ");
+                    String subject = (String) snapshot.child("subject").getValue();
+                    String time = (String) snapshot.child("time").getValue();
+
+                    String dateStr = time;
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                    Date formatDate = null;
 
 
+                    try {
+                        // Date型変換
+                        formatDate = sdf.parse(dateStr);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-                    sb.append(key);//.append(" ").append(subject).append(" ").append(time).append(" ").append(time);
+
+                    study_data[i].subject = subject;
+                    study_data[i].time = formatDate;
+                    if(i<10 - 1){
+                        i++;
+                    }
+
+                    //sb.append(key).append(" ").append(subject).append(" ").append(formatDate);//.append(" ").append(time);
+                    //sb.append("\n");
+                }
+
+
+                for (int j = 0; j < 10; j++) {
+                    sb.append(study_data[j].subject);
+                    sb.append("\n");
+                    sb.append(study_data[j].time);
                     sb.append("\n");
                 }
+
 
                 mTxtHistory.setText(sb.toString());
             }

@@ -2,8 +2,15 @@ package com.kayosystem.honki.chapter08.lesson36;
 
 public class UserId {
 
-    public String time;
-    public String subject;
+    public String time ;
+    public String subject = "";
+
+    public UserId(){}
+
+    public UserId(String time,String subject){
+        this.time = time;
+        this.subject = subject;
+    }
 
 
     public void setTime(String time) {
